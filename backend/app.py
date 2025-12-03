@@ -58,7 +58,6 @@ def predict():
 
         # -----------------------------
         # PREPROCESSING SAME AS NOTEBOOK
-        # -----------------------------
 
         # BP conversion: (top + bottom) / 2
         bp_value = (bp_top + bp_bottom) / 2
@@ -67,7 +66,7 @@ def predict():
         # BUILD INPUT DATAFRAME ORDERED AS FEATURE NAMES
         # -----------------------------
         input_dict = {
-            "Weight": weight,
+            "Weight_kg": weight,
             "BP": bp_value,
             "Glucose": glucose,
             "HeartRate": heartrate,
@@ -121,3 +120,4 @@ def predict():
 # -------------------------------------------------------
 if __name__ == "__main__":
     app.run(debug=True)
+
