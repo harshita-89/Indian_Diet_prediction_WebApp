@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diet Recommendation</title>
+    <link rel="stylesheet" href="pred_style.css">
+</head>
+
+<body>
+    <div class="container">
+        <h2>Diet Recommendation System</h2>
+
+        <form id="dietForm">
+
+            <div class="row">
+                <div class="column">
+                    <label>Name</label>
+                    <input type="text" id="name" required>
+                </div>
+
+                <div class="column">
+                    <label>State</label>
+                    <select id="state" required>
+                        <option value="" disabled selected>Select State</option>
+                        <option value="Andhra Pradesh">Andhra Pradesh</option>
+                        <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+                        <option value="Assam">Assam</option>
+                        <option value="Bihar">Bihar</option>
+                        <option value="Chhattisgarh">Chhattisgarh</option>
+                        <option value="Delhi">Delhi</option>
+                        <option value="Goa">Goa</option>
+                        <option value="Gujarat">Gujarat</option>
+                        <option value="Haryana">Haryana</option>
+                        <option value="Himachal Pradesh">Himachal Pradesh</option>
+                        <option value="Jharkhand">Jharkhand</option>
+                        <option value="Karnataka">Karnataka</option>
+                        <option value="Kerala">Kerala</option>
+                        <option value="Madhya Pradesh">Madhya Pradesh</option>
+                        <option value="Maharashtra">Maharashtra</option>
+                        <option value="Manipur">Manipur</option>
+                        <option value="Meghalaya">Meghalaya</option>
+                        <option value="Mizoram">Mizoram</option>
+                        <option value="Nagaland">Nagaland</option>
+                        <option value="Odisha">Odisha</option>
+                        <option value="Punjab">Punjab</option>
+                        <option value="Rajasthan">Rajasthan</option>
+                        <option value="Sikkim">Sikkim</option>
+                        <option value="Tamil Nadu">Tamil Nadu</option>
+                        <option value="Telangana">Telangana</option>
+                        <option value="Tripura">Tripura</option>
+                        <option value="Uttar Pradesh">Uttar Pradesh</option>
+                        <option value="Uttarakhand">Uttarakhand</option>
+                        <option value="West Bengal">West Bengal</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="column">
+                    <label>BP (Top/Bottom)</label>
+                    <input type="text" id="bp" placeholder="120/80" required>
+                </div>
+
+                <div class="column">
+                    <label>Daily Calories</label>
+                    <input type="number" id="dailyCalories" required>
+                </div>
+            </div>
+
+            <div class="row">
+
+                <div class="column">
+                    <label>Weight (kg)</label>
+                    <input type="number" id="weight" required>
+                </div>
+
+                <div class="column">
+                    <label>Glucose</label>
+                    <input type="number" id="glucose" required>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="column">
+                    <label>Heart Rate</label>
+                    <input type="number" id="heartRate" required>
+                </div>
+
+                <div class="column">
+                    <label>Stamina</label>
+                    <select id="stamina" required>
+                        <option value="" disabled selected>Select</option>
+                        <option value="High">High</option>
+                        <option value="Medium">Medium</option>
+                        <option value="Low">Low</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="column">
+                    <label>Disease</label>
+                    <select id="disease" required>
+                        <option value="" disabled selected>Select</option>
+                        <option vlaue="Stress">Stress</option>
+                        <option value ="Hypertension">Hypertension</option>
+                        <option value="None">None</option>
+                        <option value="Diabetes">Diabetes</option>
+                        <option value="Anxiety">Anxiety</option>
+                        <option value="Thyroid">Thyroid</option>
+                        <option value="Obesity">Obesity</option>
+                        <option value="LowIron">Low-Iron</option>
+                    </select>
+                </div>
+
+                <div class="column">
+                    <label>Severity</label>
+                    <select id="severity" required>
+                        <option value="" disabled selected>Select</option>
+                        <option value="Severe">Severe</option>
+                        <option value="Moderate">Moderate</option>
+                        <option value="Mild">Mild</option>
+                        <option value="nan">None</option>
+                    </select>
+                </div>
+            </div>
+
+
+            <button type="submit" class="predict-btn">Predict Diet</button>
+        </form>
+        <button class="back-btn" onclick="window.location.href='index.html'">
+            ⬅ Back to Home
+        </button>
+
+    </div>
+
+    <script>
+    document.getElementById("dietForm").addEventListener("submit", async function (e) {
+        e.preventDefault(); // Prevent default form submission
+
+        // Get BP input in format "120/80"
+        const bpValue = document.getElementById("bp").value.trim();
+        let [bp_top, bp_bottom] = bpValue.split("/");
+
+        // Validate BP format
+        if (!bp_top || !bp_bottom || isNaN(bp_top) || isNaN(bp_bottom)) {
+            alert("Please enter BP in correct format: 120/80");
+            return;
+        }
+
+        // Convert top/bottom to average BP for the model
+        const final_bp = (parseFloat(bp_top) + parseFloat(bp_bottom)) / 2;
+
+        // Gather all form data
+        const data = {
+            username: document.getElementById("name").value,
+            state: document.getElementById("state").value,
+            weight: document.getElementById("weight").value,
+            bp: final_bp, 
+            glucose: document.getElementById("glucose").value,
+            heartRate: document.getElementById("heartRate").value,
+            stamina: document.getElementById("stamina").value,
+            disease: document.getElementById("disease").value,
+            severity: document.getElementById("severity").value,
+            dailyCalories: document.getElementById("dailyCalories").value
+        };
+
+        try {
+            // Send data to backend
+            const response = await fetch("/predict", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+
+            // Redirect to result page if successful
+            if (result.status === "success") {
+                window.location.href = `/result?name=${encodeURIComponent(data.username)}&state=${encodeURIComponent(data.state)}&diet=${encodeURIComponent(result.diet)}`;
+            } else {
+                alert("Error: " + result.message);
+            }
+        } catch (err) {
+            console.error(err);
+            alert("An error occurred while processing your request.");
+        }
+    });
+    </script>
+
+</body>
+</html> 
